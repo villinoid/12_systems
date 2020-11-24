@@ -3,9 +3,26 @@
 #include <string.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <errno.h>
 
-int main(){
-	DIR *dir=opendir(".");
+int main(int argc, char **argv){
+	char path[1000]; 
+	int i=0;
+	if (argc>1){
+		strncpy(path,argv[1],sizeof(path));
+	}
+	else{
+		printf("Input a path to directory: ");
+		fgets(path,sizeof(path),stdin);
+		while(path[i]){};
+		path[i-1]=0;
+	}
+	printf("%s\n",path);
+	DIR *dir=opendir(path);
+	if (dir==0){
+		printf("error: %d %s\n",errno,strerror(errno));
+		return 0;
+	}
 	printf("Statistics for directory:\n");
 	int size=0;
 	struct dirent *entry;
@@ -36,6 +53,7 @@ int main(){
 		}
 		entry=readdir(dir);
 	}
+	closedir(dir);
 	return 0;
 }
 	
